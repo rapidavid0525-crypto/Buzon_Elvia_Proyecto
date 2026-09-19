@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buzón Virtual Universitario - UTN</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Menú de Navegación WEB -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="#inicio" onclick="navigateTo('inicio')">
+                    <span class="logo-text">UTN</span> | Buzón Virtual
+                </a>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#inicio" onclick="navigateTo('inicio')">Inicio</a></li>
+                <li><a href="#buzon" onclick="navigateTo('buzon')">Buzón</a></li>
+                <li><a href="#problematicas" onclick="navigateTo('problematicas')">Problemáticas</a></li>
+                <li><a href="#informacion" onclick="navigateTo('informacion')">Información</a></li>
+                <li><a href="#contacto" onclick="navigateTo('contacto')">Contacto</a></li>
+                <li><a href="#ayuda" onclick="navigateTo('ayuda')">Ayuda</a></li>
+            </ul>
+
+            <div class="nav-extras">
+                <div class="search-box">
+                    <input type="text" id="global-search" placeholder="Buscar en el sitio..." onkeyup="handleSearch(event)">
+                </div>
+                <div id="auth-buttons">
+                    <button class="btn btn-outline" onclick="navigateTo('login')">Iniciar Sesión</button>
+                    <button class="btn btn-primary" onclick="navigateTo('registro')">Registrar</button>
+                </div>
+                <div id="user-profile" class="hidden">
+                    <span id="user-display"></span>
+                    <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ÁREA DE CONTENIDO DINÁMICO (SECCIONES) -->
+    <main id="app-content">
+
+        <!-- Inicio -->
+        <section id="sec-inicio" class="page-section active">
+            <div class="hero">
+                <h1>Buzón Virtual Universitario</h1>
+                <p>Plataforma para la identificación, documentación y visualización de problemáticas de la comunidad universitaria.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="navigateTo('buzon')">Registrar Problemática</button>
+                    <button class="btn btn-secondary" onclick="navigateTo('problematicas')">Ver Reportes</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Buzón (Registrar Problemática) -->
+        <section id="sec-buzon" class="page-section">
+            <h2>Registrar Nueva Problemática / Reporte</h2>
+            <form id="form-problemática" onsubmit="guardarProblematica(event)">
+                <div class="form-group">
+                    <label for="p-titulo">Título del reporte:</label>
+                    <input type="text" id="p-titulo" required placeholder="Ej. Falta de mantenimiento en laboratorios">
+                </div>
+                
+                <div class="form-group">
+                    <label for="p-tipo">Tipo de publicación:</label>
+                    <select id="p-tipo" required>
+                        <option value="Comentario">Comentario</option>
+                        <option value="Sugerencia">Sugerencia</option>
+                        <option value="Queja">Queja</option>
+                        <option value="Idea">Idea</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="p-categoria">Categoría:</label>
+                    <select id="p-categoria" required>
+                        <option value="Infraestructura">Infraestructura</option>
+                        <option value="Calidad educativa">Calidad educativa</option>
+                        <option value="Docentes">Docentes</option>
+                        <option value="Planes de estudio">Planes de estudio</option>
+                        <option value="Administración">Administración</option>
+                        <option value="Seguridad">Seguridad</option>
+                        <option value="Limpieza">Limpieza</option>
+                        <option value="Servicios">Servicios (Cafetería, Sanitarios, etc.)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="p-descripcion">Descripción detallada:</label>
+                    <textarea id="p-descripcion" rows="5" required placeholder="Describe la situación..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Publicar Reporte</button>
+            </form>
+        </section>
+
+        <!-- Problemáticas (Listado y Filtros) -->
+        <section id="sec-problematicas" class="page-section">
+            <h2>Consultar Problemáticas</h2>
+            <div class="filter-bar">
+                <select id="filter-categoria" onchange="renderProblematicas()">
+                    <option value="TODAS">Todas las categorías</option>
+                    <option value="Infraestructura">Infraestructura</option>
+                    <option value="Calidad educativa">Calidad educativa</option>
+                    <option value="Docentes">Docentes</option>
+                    <option value="Seguridad">Seguridad</option>
+                    <option value="Limpieza">Limpieza</option>
+                    <option value="Servicios">Servicios</option>
+                </select>
+            </div>
+            <div id="lista-problematicas" class="card-grid"></div>
+        </section>
+
+        <!-- Información -->
+        <section id="sec-informacion" class="page-section">
+            <h2>Información Institucional</h2>
+            <article>
+                <h3>¿Qué es el Buzón Virtual Universitario?</h3>
+                <p>Es un medio centralizado para recopilar, organizar y dar visibilidad a las necesidades y problemáticas de los estudiantes y docentes de la UTN.</p>
+            </article>
+            <article>
+                <h3>Preguntas Frecuentes</h3>
+                <details>
+                    <summary>¿Las publicaciones son confidenciales?</summary>
+                    <p>El sistema permite el registro de usuarios garantizando el manejo responsable de los datos del perfil.</p>
+                </details>
+                <details>
+                    <summary>¿Puedo editar o eliminar mis publicaciones?</summary>
+                    <p>Sí, los usuarios creadores pueden gestionar los reportes emitidos desde su cuenta.</p>
+                </details>
+            </article>
+        </section>
+
+        <!-- Contacto -->
+        <section id="sec-contacto" class="page-section">
+            <h2>Contáctanos</h2>
+            <form onsubmit="event.preventDefault(); alert('Mensaje de contacto enviado con éxito.');">
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico:</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mensaje:</label>
+                    <textarea rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Consulta</button>
+            </form>
+        </section>
+
+        <!-- Ayuda -->
+        <section id="sec-ayuda" class="page-section">
+            <h2>Centro de Ayuda</h2>
+            <p>Si experimentas problemas técnicos o requieres orientación adicional, consulta nuestro mapa de sitio o contáctanos directamente a través del chat de asistencia.</p>
+        </section>
+
+        <!-- Iniciar Sesión -->
+        <section id="sec-login" class="page-section">
+            <div class="auth-card">
+                <h2>Iniciar Sesión</h2>
+                <form id="form-login" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Correo Electrónico:</label>
+                        <input type="email" id="login-email" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña:</label>
+                        <input type="password" id="login-password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary block">Ingresar</button>
+                </form>
+                <p class="auth-footer">
+                    <a href="#recuperar" onclick="navigateTo('recuperar')">¿Olvidaste tu contraseña?</a> | 
+                    <a href="#registro" onclick="navigateTo('registro')">Crear una cuenta</a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Registro de Usuario -->
+        <section id="sec-registro" class="page-section">
+            <div class="auth-card">
+                <h2>Registro de Usuario</h2>
+                <form id="form-registro" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="reg-nombre">Nombre Completo:</label>
+                        <input type="text" id="reg-nombre" required placeholder="Ej. Daniel Castro">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Correo Electrónico:</label>
+                        <input type="email" id="reg-email" required placeholder="usuario@utn.edu.mx">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Contraseña:</label>
+                        <input type="password" id="reg-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button type="submit" class="btn btn-primary block">Registrarse</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Recuperar Contraseña -->
+        <section id="sec-recuperar" class="page-section">
+            <div class="auth-card">
+                <h2>Recuperar Contraseña</h2>
+                <p>Ingresa tu correo registrado y te enviaremos las instrucciones de restablecimiento.</p>
+                <form onsubmit="handleRecuperar(event)">
+                    <div class="form-group">
+                        <label for="rec-email">Correo Electrónico:</label>
+                        <input type="email" id="rec-email" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary block">Enviar Instrucciones</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Mapa del Sitio -->
+        <section id="sec-mapa" class="page-section">
+            <h2>Mapa del Sitio Web</h2>
+            <div class="sitemap-container">
+                <ul>
+                    <li><strong>Sección Principal:</strong>
+                        <ul>
+                            <li><a href="#inicio" onclick="navigateTo('inicio')">Inicio</a></li>
+                            <li><a href="#buzon" onclick="navigateTo('buzon')">Buzón</a>
+                                <ul><li>Registrar problemática</li></ul>
+                            </li>
+                            <li><a href="#problematicas" onclick="navigateTo('problematicas')">Problemáticas</a>
+                                <ul>
+                                    <li>Ver problemáticas</li>
+                                    <li>Buscar problemática</li>
+                                </ul>
+                            </li>
+                            <li><a href="#informacion" onclick="navigateTo('informacion')">Información</a>
+                                <ul>
+                                    <li>¿Qué es el Buzón?</li>
+                                    <li>Preguntas frecuentes</li>
+                                </ul>
+                            </li>
+                            <li><a href="#contacto" onclick="navigateTo('contacto')">Contacto</a></li>
+                            <li><a href="#ayuda" onclick="navigateTo('ayuda')">Ayuda</a></li>
+                        </ul>
+                    </li>
+                    <li><strong>Acceso de Usuarios:</strong>
+                        <ul>
+                            <li><a href="#registro" onclick="navigateTo('registro')">Registrar usuario</a></li>
+                            <li><a href="#login" onclick="navigateTo('login')">Iniciar sesión</a></li>
+                            <li><a href="#recuperar" onclick="navigateTo('recuperar')">Recuperar contraseña</a></li>
+                        </ul>
+                    </li>
+                    <li><strong>Elementos Adicionales:</strong>
+                        <ul>
+                            <li><a href="#chat" onclick="toggleChat()">Chat interactivo</a></li>
+                            <li><a href="#mapa" onclick="navigateTo('mapa')">Mapa del sitio</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Página de Error 404 -->
+        <section id="sec-404" class="page-section">
+            <div class="error-container">
+                <h1>404</h1>
+                <h2>Página No Encontrada</h2>
+                <p>El recurso o ruta solicitada no está disponible o no existe dentro de la plataforma.</p>
+                <button class="btn btn-primary" onclick="navigateTo('inicio')">Volver al Inicio</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Widget de Chat Interactivo -->
+    <div id="chat-widget" class="chat-collapsed">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>💬 Chat de Ayuda</span>
+            <span id="chat-toggle-icon">▲</span>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-msg bot">¡Hola! ¿En qué puedo ayudarte hoy sobre el Buzón Escolar?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()">▶</button>
+        </div>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Universidad Tecnológica de Nezahualcóyotl - Ingeniería en Desarrollo y Gestión de Software Multiplataforma</p>
+            <p>
+                <a href="#mapa" onclick="navigateTo('mapa')">Mapa del Sitio</a> | 
+                <a href="#ayuda" onclick="navigateTo('ayuda')">Ayuda</a> | 
+                <a href="#contacto" onclick="navigateTo('contacto')">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
